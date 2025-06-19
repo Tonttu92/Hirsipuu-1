@@ -23,21 +23,21 @@ class Pelinlogiikka:
     def arvaa(self, arvaus):
         arvaus = arvaus.lower()
         if not arvaus.isalpha():
-            return f"Anna vain kirjaimia."
+            return "Anna vain kirjaimia."
         
         if len(arvaus) == 1:
             if arvaus in self.arvaukset:
-                return f"Olet jo arvannut tämän kirjaimen."
+                return "Olet jo arvannut tämän kirjaimen."
             self.arvaukset.add(arvaus)
             if arvaus in self.sana:
-                return f"Kirjain on sanassa."
+                return "Kirjain on sanassa."
             else:
                 self.yritykset -=1
-                return f"Väärä kirjain"
+                return "Väärä kirjain"
         else:
             if arvaus == self.sana:
                 self.arvaukset.update(self.sana)
-                return f"Oikea sana"
+                return "Oikea sana"
             else:
                 self.yritykset -= 1
                 return f"väärä sana!! Sana ei ollut \"{arvaus}\"."
@@ -51,3 +51,22 @@ class Pelinlogiikka:
         if all(k in self.arvaukset for k in self.sana):
             return True, f"Onneksi olkoon! Arvasit sanan oikein: {self.sana}"
         return False, ""
+    
+class Hirsipuu:
+    def __init__(self):
+        sana = Sanatiedosto.valitse_sana(self)
+        self.peli = Pelinlogiikka(sana)
+
+    def kaynnista(self):
+        print("Tervetuloa pelaamaan Hirsipuuta!")
+        while True:
+            print("sana: ", " ".join(self.peli.tilanne()))
+            print(f"Yrityksiä jäljellä: {self.peli.yritykset}")
+            arvaus = input("Arvaa kirjain tai koko sana: ")
+            vastaus = self.peli.arvaa(arvaus)
+            print(vastaus)
+
+            loppu, viesti = self.peli.pelin_loppu()
+            if loppu:
+                print(viesti)
+                break
